@@ -1,0 +1,21 @@
+itemId,title,price,likesCounter
+1,Radio,300,0
+2,TV,1100,0
+3,Phone,1000,0
+4,Laptop,1500,0
+5,Antenna,25,0
+6,Table,50,0
+7,Chair,25,0
+8,Table Lamp,30,0
+9,Camera,110,0
+10,Monitor,300,0
+11,Mouse,20,0
+12,Book,32,0
+13,Keyboard,12,0
+14,Bed,200,0
+15,Sofa,150,0
+16,Tea,10,0
+17,Coffee,15,0
+18,Pot,30,0
+19,Frying Pan,35,0
+20,Wall Watch,30,0
