@@ -4,36 +4,38 @@ CALL db.schema.nodeTypeProperties()
 CALL db.schema.relTypeProperties()
 SHOW CONSTRAINTS
 
+//You can also delete all nodes and relationships in a database with this code.
+MATCH (n)
+DETACH DELETE n
 //-----------------------
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=12E9_mZdfger5jYD0H5fw17eRtPq-5Xll' AS row
-return row
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/customers.csv' AS customers
+return customers
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=1iyEyFGrsWH6-iq2A36Do-6piIQ5g9DRl' AS row
-return row
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/orders.csv' AS orders
+return orders
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=1S0nk7SZMEbdsQC0RmuJhjdSqQQw7v4AO' AS row
-return row
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/items.csv' AS items
+return items
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=1lxPCogo1Mlp2VPy61uCFHraPBDsm1G7z' AS row
-return row
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/bought_includes.csv' AS bought
+return bought
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=1bM5B3r7oGvQPI7mi6W9wTUnpwjU6ebja' AS row
-return row
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/viewed.csv' AS viewed
+return viewed
 
-//--------------
+//Load Customers--------------
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=12E9_mZdfger5jYD0H5fw17eRtPq-5Xll' AS row
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/customers.csv' AS row
 MERGE (c:Customer {customerId: toInteger(row.customerId)})
 SET
-c.name = row.name,
-c.title = row.title
+c.name = row.name
 
 CREATE CONSTRAINT Customer_id IF NOT EXISTS
 FOR (c:Customer) 
@@ -42,11 +44,11 @@ REQUIRE c.customerId IS UNIQUE
 MATCH (c:Customer)
 return c
 
-//-----------
+// Load Orders-----------
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=1iyEyFGrsWH6-iq2A36Do-6piIQ5g9DRl' AS row
-MERGE (o:Order {orderId: (row.orderId)})
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/orders.csv' AS row
+MERGE (o:Order {orderId: toInteger(row.orderId)})
 SET
 o.title = row.title
 
@@ -58,11 +60,11 @@ MATCH (o:Order)
 return o
 
 
-//---------------------------
+//Load Items---------------------------
 
 LOAD CSV WITH HEADERS
-FROM 'https://drive.google.com/uc?export=download&id=1S0nk7SZMEbdsQC0RmuJhjdSqQQw7v4AO' AS row
-MERGE (i:Item {itemId: (row.itemId)})
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/items.csv' AS row
+MERGE (i:Item {itemId: toInteger(row.itemId)})
 SET
 i.title = row.title,
 i.price = toFloat(row.price),
@@ -74,3 +76,21 @@ REQUIRE i.itemId IS UNIQUE
 
 MATCH (i:Item)
 return i
+
+//Load BOUGHT and INCLUDES relationships----
+
+LOAD CSV WITH HEADERS
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/bought_includes.csv' AS row
+MATCH (c:Customer {customerId: toInteger(row.customerId)})
+MATCH (o:Order {orderId: toInteger(row.orderId)})
+MATCH (i:Item {itemId: toInteger(row.itemId)})
+MERGE (c)-[:BOUGHT]->(o)
+MERGE (o)-[:INCLUDES]->(i)
+
+//Load VIEWED relationships----
+
+LOAD CSV WITH HEADERS
+FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/viewed.csv' AS row
+MATCH (c:Customer {customerId: toInteger(row.customerId)})
+MATCH (i:Item {itemId: toInteger(row.itemId)})
+MERGE (c)-[:VIEWED]->(i)
