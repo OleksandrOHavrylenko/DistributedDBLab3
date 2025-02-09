@@ -35,14 +35,14 @@ LOAD CSV WITH HEADERS
 FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/customers.csv' AS row
 MERGE (c:Customer {customerId: toInteger(row.customerId)})
 SET
-c.name = row.name
+c.name = row.name;
 
 CREATE CONSTRAINT Customer_id IF NOT EXISTS
 FOR (c:Customer) 
-REQUIRE c.customerId IS UNIQUE
+REQUIRE c.customerId IS UNIQUE;
 
 MATCH (c:Customer)
-return c
+return c;
 
 // Load Orders-----------
 
@@ -50,14 +50,14 @@ LOAD CSV WITH HEADERS
 FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/orders.csv' AS row
 MERGE (o:Order {orderId: toInteger(row.orderId)})
 SET
-o.title = row.title
+o.title = row.title;
 
 CREATE CONSTRAINT Order_id IF NOT EXISTS
 FOR (o:Order) 
-REQUIRE o.orderId IS UNIQUE
+REQUIRE o.orderId IS UNIQUE;
 
 MATCH (o:Order)
-return o
+return o;
 
 
 //Load Items---------------------------
@@ -68,14 +68,14 @@ MERGE (i:Item {itemId: toInteger(row.itemId)})
 SET
 i.title = row.title,
 i.price = toFloat(row.price),
-i.likesCounter = toInteger(row.likesCounter)
+i.likesCounter = toInteger(row.likesCounter);
 
 CREATE CONSTRAINT Item_id IF NOT EXISTS
 FOR (i:Item) 
-REQUIRE i.itemId IS UNIQUE
+REQUIRE i.itemId IS UNIQUE;
 
 MATCH (i:Item)
-return i
+return i;
 
 //Load BOUGHT and INCLUDES relationships----
 
@@ -85,7 +85,7 @@ MATCH (c:Customer {customerId: toInteger(row.customerId)})
 MATCH (o:Order {orderId: toInteger(row.orderId)})
 MATCH (i:Item {itemId: toInteger(row.itemId)})
 MERGE (c)-[:BOUGHT]->(o)
-MERGE (o)-[:INCLUDES]->(i)
+MERGE (o)-[:INCLUDES]->(i);
 
 //Load VIEWED relationships----
 
@@ -93,4 +93,4 @@ LOAD CSV WITH HEADERS
 FROM 'https://raw.githubusercontent.com/OleksandrOHavrylenko/DistributedDBLab3/refs/heads/main/src/main/resources/data/viewed.csv' AS row
 MATCH (c:Customer {customerId: toInteger(row.customerId)})
 MATCH (i:Item {itemId: toInteger(row.itemId)})
-MERGE (c)-[:VIEWED]->(i)
+MERGE (c)-[:VIEWED]->(i);
