@@ -30,8 +30,8 @@ RETURN SUM(i.price) AS `Total Cost`;
 
 //7 Знайті скільки разів кожен товар був придбаний, відсортувати за цим значенням
 MATCH (o:Order)-[:INCLUDES]->(i:Item)
-RETURN i.itemId, i.title, COUNT(i) AS `Count times bought`
-ORDER BY COUNT(i) DESC;
+RETURN i.itemId, i.title, COUNT(i) AS count
+ORDER BY count DESC;
 
 //8 Знайти всі Items переглянуті (view) конкретним Customer
 MATCH (c:Customer)-[:VIEWED]->(i:Item)
@@ -39,7 +39,12 @@ WHERE c.customerId = 1
 RETURN i AS `Items Viewed`;
 
 //9 Знайти інші Items що купувались разом з конкретним Item (тобто всі Items що входять до Order-s разом з даними Item)
-
+MATCH(allOrders:Order)-[:INCLUDES]->(specItem:Item)
+WHERE specItem.itemId = 2
+WITH allOrders, specItem
+MATCH (allOrders)-[:INCLUDES]->(otherItems:Item)
+WHERE otherItems <> specItem
+RETURN DISTINCT otherItems;
 
 //10 Знайти Customers які купили даний конкретний Item
 MATCH (c:Customer)-[:BOUGHT]->(o:Order)-[:INCLUDES]->(i:Item)
