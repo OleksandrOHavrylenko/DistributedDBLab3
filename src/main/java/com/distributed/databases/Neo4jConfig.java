@@ -14,7 +14,7 @@ public class Neo4jConfig {
     public static final String USERNAME = "neo4j";
     public static final String PASSWORD = "password";
 
-    static Driver initDriver() {
+    public static Driver initDriver() {
         AuthToken auth = AuthTokens.basic(USERNAME, PASSWORD);
         Driver driver = GraphDatabase.driver(NEO4J_URI, auth);
         driver.verifyConnectivity();

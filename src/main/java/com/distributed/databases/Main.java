@@ -1,19 +1,50 @@
 package com.distributed.databases;
 
+import com.distributed.databases.tests.CounterTest;
+import com.distributed.databases.tests.LikesCounterTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Oleksandr Havrylenko
- **///TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+ **/
 public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+    private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+    public static final int THREADS_10 = 10;
+    public static final int COUNTER_10000 = 10000;
+
+    public static void main(String[] args) {
+        final CounterTest counterTest = new LikesCounterTest();
+        counterTest.createData();
+
+        long start = System.nanoTime();
+
+        testDatabaseCounter(3, () -> counterTest.test(COUNTER_10000));
+
+        long finish = System.nanoTime();
+
+        logger.info("Final result counter = {} per Duration: {} ms;", counterTest.getResult(), (finish - start) / 1_000_000.0);
     }
+
+    private static void testDatabaseCounter(final int threadsNum, Runnable task) {
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i < threadsNum; i++) {
+            Thread thread = new Thread(task);
+            thread.start();
+            threads.add(thread);
+        }
+
+        threads.forEach(t -> {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                logger.error("Interrupted while waiting for thread completion.", e);
+            }
+        });
+    }
+
 }
