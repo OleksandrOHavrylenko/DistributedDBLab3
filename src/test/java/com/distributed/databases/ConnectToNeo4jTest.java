@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author Oleksandr Havrylenko
  **/
-public class _01_ConnectToNeo4jTest {
+public class ConnectToNeo4jTest {
     @Test
     void createDriverAndConnectToServer() {
         Driver driver = Neo4jConfig.initDriver();

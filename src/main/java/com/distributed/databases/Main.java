@@ -19,11 +19,12 @@ public class Main {
 
     public static void main(String[] args) {
         final CounterTest counterTest = new LikesCounterTest();
+        logger.info("Starting CounterTest.");
         counterTest.createData();
 
         long start = System.nanoTime();
 
-        testDatabaseCounter(3, () -> counterTest.test(COUNTER_10000));
+        testDatabaseCounter(THREADS_10, () -> counterTest.test(COUNTER_10000));
 
         long finish = System.nanoTime();
 
